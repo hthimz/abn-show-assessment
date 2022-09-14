@@ -15,7 +15,7 @@ Function Naming Convention - camelCasing
 
 ```
 
-## Features
+## Front End Practices
 ```
 - caching of Dashboard data
 - debouncing optimization on search
@@ -35,6 +35,7 @@ yarn serve
 yarn test
 ```
 
+## Repo
 ```
 https://github.com/hthimz/abn-show-assessment/tree/main
 ```
