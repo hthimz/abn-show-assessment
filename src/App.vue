@@ -1,10 +1,13 @@
 <template>
   <header>
     <router-link to="/">
-      <h1><span>ABN</span>-Shows</h1>
+      <span class="home-button">&lt;</span>
+      <h1>
+        <span>ABN</span>-Shows
+      </h1>
     </router-link>
   </header>
-  <router-view/>
+  <router-view />
 </template>
  
 <style lang="scss">
@@ -12,33 +15,44 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Fira Sans', sans-serif;
+  font-family: $font-primary;
+
   &::selection {
-    background: transparentize(#42B883, 0.5);
+    background: $color-bg-selection;
   }
 }
+
 body {
-  background-color: #35495E;
+  background-color: $color-body;
 }
+
 a {
   text-decoration: none;
 }
-
 
 header {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px 16px;
-  background-color: #2C3D4E;
-  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1);
+  background-color: $color-primary-bg;
+  box-shadow: $box-shadow-1;
+
   h1 {
-    color: #FFF;
+    color: $color-white;
     font-size: 28px;
+
     span {
-      color: #66BFBF;
+      color: $color-primary;
     }
   }
-}
 
+  .home-button {
+    font-size: 36px;
+    position: absolute;
+    left: 16px;
+    top: 1px;
+    color: $color-pale-orange;
+  }
+}
 </style>

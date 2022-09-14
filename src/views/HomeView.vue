@@ -1,138 +1,136 @@
 <template>
   <div class="home">
     <!-- Search Input for Movies  -->
-    <SearchInput movies="movies" @updateMovies="updateTvShows" @setDashboardMoviesFromLocal="setDashboardMoviesFromLocalStorage"/>
-
+    <SearchInput movies="movies" @updateMovies="updateTvShows"
+      @setDashboardMoviesFromLocal="setDashboardMoviesFromLocalStorage" />
     <!-- Dashboard loads with following movie -->
     <div v-if="showDashboardMovies" class="dashboard-list">
       <div v-for="(value, key) in availableGenres" :key="key" class="scrolling-wrapper-js">
         <div class="genre-text">{{key}}</div>
-      <div v-for="movie in value" :key="movie.score" class="card">
-    <router-link :to="'/movie/'+movie.id" class="movie-link">
-      <MovieCard 
-       :imageUrl="movie.image?.medium || 'fallback.jpg'"
-       :name="movie.name"
-       :summary="movie.summary"
-       :type="movie.type"
-       :year="movie?.premiered?.split('-')[0] || 'N.A'"
-       />
-    </router-link>
-      </div>
+        <div v-for="movie in value" :key="movie.score" class="card">
+          <router-link :to="'/movie/'+movie.id" class="movie-link">
+            <MovieCard :imageUrl="movie.image?.medium || constant.fallbackImage" :name="movie.name"
+              :summary="movie.summary" :type="movie.type" :year="movie?.premiered?.split('-')[0] || 'N.A'" />
+          </router-link>
+        </div>
       </div>
     </div>
 
-    
+
     <!-- View when Movie is Searched and result will be shown by following snippet -->
     <div v-else class="movies-list">
       <div class="movie" v-for="movie in movies" :key="movie.show.id">
-      <router-link :to="'/movie/'+movie.show.id" class="movie-link">
-       <MovieCard 
-       :imageUrl="movie.show.image?.medium || 'fallback.jpg'"
-       :name="movie.show.name"
-       :summary="movie.show.summary"
-       :type="movie.show.type"
-       :year="movie.show?.premiered?.split('-')[0] || 'N.A'"
-       />
-      </router-link>
+        <router-link :to="'/movie/'+movie.show.id" class="movie-link">
+          <MovieCard :imageUrl="movie.show.image?.medium || constant.fallbackImage" :name="movie.show.name"
+            :summary="movie.show.summary" :type="movie.show.type"
+            :year="movie.show?.premiered?.split('-')[0] || 'N.A'" />
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import MovieCard from '@/components/MovieCard/MovieCard.vue';
-import SearchInput from '@/components/SearchInput/SearchInput.vue';
+// Dashboard 
+import MovieCard from '@/components/movie-card/MovieCard.vue';
+import SearchInput from '@/components/search-input/SearchInput.vue';
 import AppServices from '@/services/AppServices';
-import {requiredGenre} from '@/utils/globalCon';
+import { requiredGenre, constant } from '@/utils/constants';
 import { computed } from '@vue/reactivity';
 import { onMounted, ref } from 'vue';
 import { setDashboardDataInLocalStorage, useCachedStorageForDashboard, getDashboardDataInLocalStorage } from '@/utils/helper';
 export default {
- name:'HomeView',
- components: {MovieCard,
-              SearchInput
-              },
-setup(){
-  const movies=ref([]);
-  let showDashboardMovies=ref();
-  const updateTvShows=(value)=>{
-    movies.value = value;
-    showDashboardMovies.value=false
-  }
+  name: 'HomeView',
+  components: {
+    MovieCard,
+    SearchInput
+  },
+  setup() {
+    const movies = ref([]);
+    let showDashboardMovies = ref(true);
+    const updateTvShows = (value) => {
+      movies.value = value;
+      showDashboardMovies.value = false
+    }
 
- const  availableGenres= computed(()=>{
-    const availableDashboardGenreObject ={}
-    movies.value.length>0 && requiredGenre.map(requiredGenreKey=>{
-      movies.value.map(moviesKey=>moviesKey.genres.indexOf(requiredGenreKey)!= -1 ?
-      !availableDashboardGenreObject[requiredGenreKey]?
-        availableDashboardGenreObject[requiredGenreKey]=[moviesKey]
-      :
-      availableDashboardGenreObject[`${requiredGenreKey}`].push(moviesKey)
-      :
-      false
-      )
+    const availableGenres = computed(() => {
+      const availableDashboardGenreObject = {}
+      movies.value.length && requiredGenre.map(requiredGenreKey => {
+        movies.value.map(moviesKey => moviesKey.genres.indexOf(requiredGenreKey) != -1 ?
+          !availableDashboardGenreObject[requiredGenreKey] ?
+            availableDashboardGenreObject[requiredGenreKey] = [moviesKey]
+            :
+            availableDashboardGenreObject[`${requiredGenreKey}`].push(moviesKey)
+          :
+          false
+        )
+      })
+      return availableDashboardGenreObject
     })
-    return availableDashboardGenreObject
-  })
-onMounted(async() => {
-if(useCachedStorageForDashboard()){
-  setDashboardMoviesFromLocalStorage()
-}else{
-const response = await AppServices.getShows(1);
-movies.value = response.data;
-showDashboardMovies.value=true
-setDashboardDataInLocalStorage(response.data)
-}
-})
 
-const setDashboardMoviesFromLocalStorage=()=>{
-showDashboardMovies.value=true
-let data = getDashboardDataInLocalStorage("dashboardMoviesData");
-movies.value=data;
-}
-return {
-  movies,
-  updateTvShows,
-  requiredGenre,
-  availableGenres,
-  showDashboardMovies,
-  setDashboardMoviesFromLocalStorage
-}
-}
+    onMounted(async () => {
+      if (useCachedStorageForDashboard()) {
+        setDashboardMoviesFromLocalStorage()
+      } else {
+        const response = await AppServices.getShows(constant.getShowsPageNumber);
+        movies.value = response.data;
+        showDashboardMovies.value = true
+        setDashboardDataInLocalStorage(response.data)
+      }
+    })
+
+    const setDashboardMoviesFromLocalStorage = () => {
+      showDashboardMovies.value = true
+      let data = getDashboardDataInLocalStorage(constant.dashboardShowsDataCache);
+      movies.value = data;
+    }
+    return {
+      constant,
+      movies,
+      updateTvShows,
+      requiredGenre,
+      availableGenres,
+      showDashboardMovies,
+      setDashboardMoviesFromLocalStorage,
+    }
+  }
 }
 </script>
 
 <style lang="scss">
-  div{
-    color: inherit;
-  }
-.movies-list{
+div {
+  color: inherit;
+}
+
+.movies-list {
   display: flex;
   flex-wrap: wrap;
   margin: 0px 8px;
   justify-content: center;
-   .movie{
+
+  .movie {
     padding: 16px 8px;
-   }
+  }
 }
-.dashboard-list{
+
+.dashboard-list {
   width: 100%;
   padding: 10px;
   overflow: hidden;
 }
+
 .scrolling-wrapper-js {
   width: 100%;
   overflow-x: scroll;
   white-space: nowrap;
-  
+
   .card {
     display: inline-block;
     padding: 32px;
   }
 
-  .genre-text{
-    color: #f8e2aa;
+  .genre-text {
+    color: $color-pale-orange;
     font-weight: 600;
     font-size: 18px;
     min-width: 400px;

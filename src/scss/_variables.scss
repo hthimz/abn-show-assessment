@@ -1,0 +1,35 @@
+//Global colors 
+
+$color-primary: #66BFBF;
+$box-shadow-1: 0px 0px 6px rgba(0, 0, 0, 0.1);
+$color-primary-bg: #2C3D4E;
+$color-white: #FFF;
+$color-body: #35495E;
+$font-primary: 'Fira Sans', sans-serif;
+$color-dark-grey: #12293f;
+$color-white-grey: #f3f3f3;
+$color-light-grey: #496583;
+$color-light-brown: #AAA;
+$color-green: #42B883;
+$color-pale-orange: #f8e2aa;
+$color-red: #FF3B41;
+
+//Appview
+$color-bg-selection: transparentize(#42B883, 0.5);
+
+
+//Movie Details
+$border-red: 1px solid $color-red;
+
+//Search-input
+$box-shadow-input: 0px 3px 6px rgba(0, 0, 0, 0.2);
+
+
+//Image Url
+$img-loader: url("../../../public/loading.gif");
+
+// Breakpoints
+$screen-sm-min: 600px;
+
+//404
+$img-page-not-found: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)
