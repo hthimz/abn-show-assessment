@@ -1,27 +1,25 @@
-import { shallowMount } from '@vue/test-utils'
+import { flushPromises, shallowMount, mount } from '@vue/test-utils'
 import { nextTick } from 'vue';
-import SearchInput from '@/components/SearchInput/SearchInput.vue'
+import SearchInput from '@/components/search-input/SearchInput.vue'
 
 describe('SearchInput.vue', () => {
   it('renders props.msg when passed', () => {
-    const wrapper = shallowMount(SearchInput, {
-    })
+    const wrapper = shallowMount(SearchInput)
     expect(wrapper.exists()).toBe(true)
   })
 
-  it('triggers updateMovies when searchinput is there', async () => {
-
+  it('triggers setDashboardMoviesFromLocal when search is empty', () => {
     const wrapper = shallowMount(SearchInput)
-    // wrapper.vm.search = 'searching'
-    // wrapper.vm.searchHandler();
-    // await nextTick();
-    // console.log("value printer",wrapper);
-    // expect(wrapper.emitted().updateMovies).toBeTruthy();
-    // const sho = wrapper;
-    console.log("getting rapper", wrapper.html());
-    console.log("getting rapper.VM", wrapper.vm);
-    // await nextTick()
-    // wrapper.vm .searchHandler();
-    // expect(wrapper.emitted().setDashboardMoviesFromLocal).toBe(true)
+    wrapper.vm.searchHandler();
+    const emitterObject = wrapper.emitted();
+    expect(Object.keys(emitterObject).indexOf('setDashboardMoviesFromLocal') !== -1).toBeTruthy()
+  })
+
+  it('checking v-bind of data value with input element', async () => {
+    const wrapper = mount(SearchInput)
+    wrapper.vm.search = 'search string';
+    await nextTick();
+    const input = wrapper.find('input');
+    expect(input.element.value).toBe('search string');
   })
 })

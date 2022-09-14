@@ -98,10 +98,6 @@ export default {
 </script>
 
 <style lang="scss">
-div {
-  color: inherit;
-}
-
 .movies-list {
   display: flex;
   flex-wrap: wrap;
